@@ -1,4 +1,4 @@
-package com.tcial.p2.binaryClock;
+package org.tcial.p2.binaryClock;
 
 import java.awt.AWTException;
 import java.awt.Color;
@@ -52,6 +52,29 @@ public class BinaryClock implements Runnable
     }
   }
 
+  void draw(Graphics g, int value, int[] xcoords, int[] ycoords, Color color, Color defaultColor)
+  {
+    int bits = 0;
+    while (bits < xcoords.length)
+    {
+      if ((value & 1) == 1)
+      {
+        // bit set
+        g.setColor(color);
+      }
+      else
+      {
+        // bit not set
+        g.setColor(defaultColor);
+      }
+
+      value >>= 1;
+
+      g.fillRect(xcoords[bits], ycoords[bits], 2, 2);
+      bits += 1;
+    }
+  }
+
   @Override
   public void run()
   {
@@ -77,75 +100,25 @@ public class BinaryClock implements Runnable
       int second = now.get(Calendar.SECOND);
 
       // draw hours
-      int b = 0;
-      while (b < 5) // 5 bits to go
-      {
-        if ((hour & 1) == 1)
-        {
-          // bit set
-          g.setColor(Color.RED);
-        }
-        else
-        {
-          // bit not set
-          g.setColor(Color.GRAY);
-        }
-
-        hour >>= 1;
-
-        g.fillRect(13 - b * 3, 1, 2, 2); // wohoo
-        b += 1;
-      }
+      int[] hourx =
+      { 13, 10, 7, 4, 1 };
+      int[] houry =
+      { 1, 1, 1, 1, 1 };
+      this.draw(g, hour, hourx, houry, Color.RED, Color.BLACK);
 
       // draw minutes
       int[] minutex =
       { 13, 10, 7, 13, 10, 7 };
       int[] minutey =
       { 7, 7, 7, 4, 4, 4 };
-      b = 0;
-      while (b < 6) // 6 bits to go
-      {
-        if ((minute & 1) == 1)
-        {
-          // bit set
-          g.setColor(Color.BLUE);
-        }
-        else
-        {
-          // bit not set
-          g.setColor(Color.GRAY);
-        }
-
-        minute >>= 1;
-
-        g.fillRect(minutex[b], minutey[b], 2, 2);
-        b += 1;
-      }
+      this.draw(g, minute, minutex, minutey, Color.YELLOW, Color.BLACK);
 
       // draw seconds
       int[] secondx =
       { 13, 10, 7, 13, 10, 7 };
       int[] secondy =
       { 13, 13, 13, 10, 10, 10 };
-      b = 0;
-      while (b < 6) // 6 bits to go
-      {
-        if ((second & 1) == 1)
-        {
-          // bit set
-          g.setColor(Color.GREEN);
-        }
-        else
-        {
-          // bit not set
-          g.setColor(Color.GRAY);
-        }
-
-        second >>= 1;
-
-        g.fillRect(secondx[b], secondy[b], 2, 2);
-        b += 1;
-      }
+      this.draw(g, second, secondx, secondy, Color.GREEN, Color.BLACK);
 
       // update icon
       this.icon.setImage(image);
